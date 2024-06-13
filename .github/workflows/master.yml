@@ -42,10 +42,10 @@ jobs:
     - name: set soft link
       run: |
         git submodule init && git submodule update --checkout 
-        
+        git clone https://github.com/Robin329/kernel_tutorial.git --depth=1
     - name: cp biscuitos
       run: |
-        sudo cp -rf ${{github.workspace}}/workspace/linux-stable/drivers/biscuitos ${{github.workspace}}/drivers/ 
+        sudo cp -rf ${{github.workspace}}/kernel_tutorial/linux-stable/drivers/biscuitos ${{github.workspace}}/drivers/ 
         ls -alh 
         ls  ${{github.workspace}}/drivers/biscuitos/
         
