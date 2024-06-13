@@ -48,18 +48,18 @@ def build_kernel(command_one):
        rk3399-roc-pc
     """
     if "build_kernel" == command_one:
-        os.system("make O=out roc-rk3399-pc_defconfig")
+        os.system("make O=build roc-rk3399-pc_defconfig")
         print("===============" + '\033[1;33m' + "Start Build Image" + '\033[0m' + "===============")
-        ret = os.system("make Image -j32 O=out  2>&1 | tee build_Image.log")
+        ret = os.system("make Image -j32 O=build  2>&1 | tee build_Image.log")
         if ret == 0:
             print("Compile Finished !!!")
         print("===============" + '\033[1;33m' + "End Build Image" + '\033[0m' + "===============")
         #time.sleep(3)
         print("===============" + '\033[1;33m' + "Start Build dtbs" + '\033[0m' + "===============")
-        os.system("make dtbs O=out  2>&1 | tee build_dtbs.log")
+        os.system("make dtbs O=build  2>&1 | tee build_dtbs.log")
         print("===============" + '\033[1;33m' + "END Build dtbs" + '\033[0m' + "===============")
         print("===============" + '\033[1;33m' + "Start Build modules" + '\033[0m' + "===============")
-        os.system("make O=out -j32 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules")
+        os.system("make O=build -j32 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules")
         os.system("./scripts/clang-tools/gen_compile_commands.py -d out/")
         print("===============" + '\033[1;33m' + "END Build modules" + '\033[0m' + "===============")
         if os.path.isdir("/home/robin/tftpboot"):
@@ -72,49 +72,49 @@ def build_kernel(command_one):
             print("tftpboot not exist!")
         if os.path.isdir("/home/robin/nfs_rootfs"):
             print("===============" + '\033[1;33m' + "Start INSTALL MODULES" + '\033[0m' + "===============")
-            os.system("sudo make O=out -j32 ARCH=arm64  M=$(PWD) INSTALL_MOD_PATH=/home/robin/nfs_rootfs modules_install")
+            os.system("sudo make O=build -j32 ARCH=arm64  M=$(PWD) INSTALL_MOD_PATH=/home/robin/nfs_rootfs modules_install")
             print("===============" + '\033[1;33m' + "END INSTALL MODULES" + '\033[0m' + "===============")
         else:
             print("nfs_rootfs directory no exist COMPILE MODULES FAILED !!!")
     elif "dtbs" == command_one:
-        os.system("make dtbs -j32 O=out  2>&1 | tee build_dtbs.log")
+        os.system("make dtbs -j32 O=build  2>&1 | tee build_dtbs.log")
         if os.path.isdir("/home/robin/tftpboot"):
             print("tftpboot is exist!")
             os.system("cp out/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtb /home/robin/tftpboot/")
             print("copy rk3399-roc-pc.dtb finish!")
     elif "Image" == command_one:
-        os.system("make Image -j32 O=out  2>&1 | tee build_Image.log")
+        os.system("make Image -j32 O=build  2>&1 | tee build_Image.log")
         if os.path.isdir("/home/robin/tftpboot"):
             print("tftpboot is exist!")
             os.system("cp out/arch/arm64/boot/Image /home/robin/tftpboot/")
             print("copy Image to tftpboot dir finish!")
         os.system("cd out/ && python ../scripts/clang-tools/gen_compile_commands.py && cd ../")
     elif "clean" == command_one:
-        finish_1 = os.system("make clean O=out")
-        finish_2 = os.system("make mrproper O=out")
+        finish_1 = os.system("make clean O=build")
+        finish_2 = os.system("make mrproper O=build")
         if finish_1 == 0 and finish_2 == 0:
             print("Clean Finish !!!")
     elif "mrproper" == command_one:
-        os.system("make mrproper O=out")
+        os.system("make mrproper O=build")
     elif "modules" == command_one:
         print("===============" + '\033[1;33m' + "Start Build MODULES" + '\033[0m' + "===============")
         #os.system("make ARCH=arm64 mrproper")
-        ret_modules = os.system("make O=out -j32 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules")
+        ret_modules = os.system("make O=build -j32 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules")
         print("===============" + '\033[1;33m' + "END Build modules" + '\033[0m' + "===============")
         if ret_modules == 0 and os.path.isdir("/home/robin/nfs_rootfs"):
             print("===============" + '\033[1;33m' + "Start INSTALL MODULES" + '\033[0m' + "===============")
-            os.system("sudo make O=out -j32 ARCH=arm64 INSTALL_MOD_PATH=/home/robin/nfs_rootfs modules_install")
+            os.system("sudo make O=build -j32 ARCH=arm64 INSTALL_MOD_PATH=/home/robin/nfs_rootfs modules_install")
             print("===============" + '\033[1;33m' + "END INSTALL MODULES" + '\033[0m' + "===============")
         else:
             print("nfs_rootfs directory no exist COMPILE MODULES FAILED !!!")
     elif "build_virt" == command_one:
-        os.system("make O=out virt_defconfig")
+        os.system("make O=build virt_defconfig")
         print("===============" + '\033[1;33m' + "Start Build Image" + '\033[0m' + "===============")
-        ret = os.system("make Image -j32 O=out  2>&1 | tee build_Image.log")
+        ret = os.system("make Image -j32 O=build  2>&1 | tee build_Image.log")
         print("===============" + '\033[1;33m' + "Start Build Dtbs" + '\033[0m' + "===============")
-        ret = os.system("make dtbs -j32 O=out  2>&1 | tee build_Image.log")
-        ret = os.system("make O=out -j32 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules")
-        ret = os.system(" ./scripts/clang-tools/gen_compile_commands.py -d out/")
+        ret = os.system("make dtbs -j32 O=build  2>&1 | tee build_Image.log")
+        # ret = os.system("make O=build -j32 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules")
+        ret = os.system(" ./scripts/clang-tools/gen_compile_commands.py -d build/")
         if ret == 0:
             print("Compile Finished !!!")
         print("===============" + '\033[1;33m' + "End Build Image" + '\033[0m' + "===============")
